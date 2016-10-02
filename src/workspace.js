@@ -72,17 +72,22 @@ class PolyPath {
 export class Production {
   constructor(types, counts) {
     this.units = {}
-    for (const name of Object.keys(counts)) {
-      this.units[name] = new ProdUnit(name, counts[name], types[name])
+    for (let name of Object.keys(types)) {
+      this.units[name] = new ProdUnit(name, counts[name] || 0, types[name])
+    }
+    for (let name of Object.keys(counts)) {
+      if (!this.units[name]) {
+        console.warn("skipping prod-set-count for undefined unittype: "+name)
+      }
     }
     // we know what each unit produces, reverse it to produced-by.
     // Start building the polynomial graph while we're at it.
     const polypath = []
-    for (const parentName of Object.keys(this.units)) {
-      const parent = this.units[parentName]
-      for (const childName of Object.keys(parent.children)) {
-        const child = this.units[childName]
-        const path = child.parents[parentName] = parent.children[childName]
+    for (let parentName of Object.keys(this.units)) {
+      let parent = this.units[parentName]
+      for (let childName of Object.keys(parent.children)) {
+        let child = this.units[childName]
+        let path = child.parents[parentName] = parent.children[childName]
         path.parent = parent
         path.child = child
         polypath.push(new PolyPath([path]))
