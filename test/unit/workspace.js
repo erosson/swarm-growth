@@ -3,6 +3,7 @@ import {Production} from '../../src/workspace';
 describe('numberformat', () => {
   it('calculates linear production', () => {
     const prod = new Production({
+      meat: {},
       drone: {meat: 3},
     }, {
       meat: 11,
@@ -14,6 +15,7 @@ describe('numberformat', () => {
   })
   it('calculates quadratic production', () => {
     const prod = new Production({
+      meat: {},
       drone: {meat: 3},
       queen: {drone: 5},
     }, {
