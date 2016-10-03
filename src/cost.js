@@ -17,6 +17,7 @@ export class Cost {
         return ret
     }
     
+    // TODO return an error code
     /**
      * @return true if we can afford the target units using the bank.
      */
