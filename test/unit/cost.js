@@ -48,7 +48,7 @@ describe('cost', () => {
             meat: 99,
         }
         expect(cost.maxBuyable(bank, 'meat')).to.be.null
-        expect(cost.maxBuyable(bank, 'drone')).to.equal(9)
+        expect(cost.maxBuyable(bank, 'drone')).to.equal(9.9)
         expect(cost.maxBuyable(bank, 'nest')).to.equal(0)
     })
     

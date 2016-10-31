@@ -20,7 +20,7 @@ export class Cost {
         const costs = this.costs[targetType]
         return _.mapValues(costs, (val, costType) => {
             if (val === 0) throw new Error('zero cost?!: '+costType)
-            return Math.floor((banks[costType] || 0) / val)
+            return (banks[costType] || 0) / val
         })
     }
     maxBuyable(banks, targetType) {
