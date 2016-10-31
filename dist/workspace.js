@@ -149,17 +149,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	
 	  _createClass(ProdUnit, [{
-	    key: "countAt",
-	    value: function countAt(sec) {
-	      // solve the polynomial
+	    key: "degreeAt",
+	    value: function degreeAt(degree0, sec) {
+	      // solving degree 0 of the polynomial gets the current count. This allows
+	      // arbitrary degrees, to solve for velocity, acceleration, etc.
 	      var ret = 0;
 	      var fact = 1;
-	      for (var degree = 0; degree < this.polynomial.length; degree++) {
+	      for (var degree = degree0; degree < this.polynomial.length; degree++) {
+	        var ddiff = degree - degree0;
 	        // c * (t^d)/d!
-	        fact *= Math.max(1, degree);
-	        ret += this.polynomial[degree] * Math.pow(sec, degree) / fact;
+	        fact *= Math.max(1, ddiff);
+	        ret += this.polynomial[degree] * Math.pow(sec, ddiff) / fact;
 	      }
 	      return ret;
+	    }
+	  }, {
+	    key: "countAt",
+	    value: function countAt(sec) {
+	      return this.degreeAt(0, sec);
+	    }
+	  }, {
+	    key: "velocityAt",
+	    value: function velocityAt(sec) {
+	      return this.degreeAt(1, sec);
+	    }
+	  }, {
+	    key: "accelerationAt",
+	    value: function accelerationAt(sec) {
+	      return this.degreeAt(2, sec);
 	    }
 	  }]);
 	
@@ -379,6 +396,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: function countAt(sec) {
 	      return (0, _mapValues2.default)(this.units, function (unit) {
 	        return unit.countAt(sec);
+	      });
+	    }
+	  }, {
+	    key: "velocityAt",
+	    value: function velocityAt(sec) {
+	      return (0, _mapValues2.default)(this.units, function (unit) {
+	        return unit.velocityAt(sec);
+	      });
+	    }
+	  }, {
+	    key: "accelerationAt",
+	    value: function accelerationAt(sec) {
+	      return (0, _mapValues2.default)(this.units, function (unit) {
+	        return unit.accelerationAt(sec);
+	      });
+	    }
+	  }, {
+	    key: "degreeAt",
+	    value: function degreeAt(degree, sec) {
+	      return (0, _mapValues2.default)(this.units, function (unit) {
+	        return unit.degreeAt(degree, sec);
 	      });
 	    }
 	  }]);

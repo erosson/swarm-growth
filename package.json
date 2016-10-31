@@ -1,6 +1,6 @@
 {
   "name": "swarm-production",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Calculate polynomial production over time like Swarm Simulator does",
   "main": "dist/workspace.js",
   "scripts": {
