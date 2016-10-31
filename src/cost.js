@@ -1,5 +1,4 @@
-import mapValues from 'lodash/mapValues'
-import mergeWith from 'lodash/mergeWith'
+import _ from 'lodash'
 
 export class Cost {
     constructor(costs) {
@@ -11,10 +10,25 @@ export class Cost {
         let ret = {}
         for (let target of Object.keys(targets)) {
             let count = targets[target]
-            let costs = mapValues(this.costs[target], (cost) => cost * count)
-            ret = mergeWith(ret, costs, (total, cost) => (total || 0) + cost)
+            let costs = _.mapValues(this.costs[target], (cost) => cost * count)
+            ret = _.mergeWith(ret, costs, (total, cost) => (total || 0) + cost)
         }
         return ret
+    }
+    
+    maxBuyablePerCurrency(banks, targetType) {
+        const costs = this.costs[targetType]
+        return _.mapValues(costs, (val, costType) => {
+            if (val === 0) throw new Error('zero cost?!: '+costType)
+            return Math.floor((banks[costType] || 0) / val)
+        })
+    }
+    maxBuyable(banks, targetType) {
+        const vals = _.values(this.maxBuyablePerCurrency(banks, targetType))
+        if (!vals.length) {
+            return null
+        }
+        return Math.min.apply(Math, vals)
     }
     
     // TODO return an error code
@@ -54,8 +68,8 @@ export class Cost {
         if (!costs) {
             throw new Error('target units are not buyable', banks, targets)
         }
-        banks = mergeWith(banks, costs, (bank, cost) => bank - cost)
-        banks = mergeWith(banks, targets, (bank, target) => (bank || 0) + target)
+        banks = _.mergeWith(banks, costs, (bank, cost) => bank - cost)
+        banks = _.mergeWith(banks, targets, (bank, target) => (bank || 0) + target)
         return banks
     }
 }

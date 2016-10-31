@@ -36,6 +36,22 @@ describe('cost', () => {
         expect(cost.isBuyable(bank, {})).to.not.be.ok
     })
     
+    it('calcs max cost', () => {
+        const cost = new Cost({
+            meat: {},
+            larva: {},
+            drone: {meat:10, larva:1},
+            nest: {drone:10, larva:1},
+        })
+        const bank = {
+            larva: 10,
+            meat: 99,
+        }
+        expect(cost.maxBuyable(bank, 'meat')).to.be.null
+        expect(cost.maxBuyable(bank, 'drone')).to.equal(9)
+        expect(cost.maxBuyable(bank, 'nest')).to.equal(0)
+    })
+    
     it('buys', () => {
         const cost = new Cost({
             meat: {},
