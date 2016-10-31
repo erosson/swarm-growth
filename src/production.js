@@ -17,17 +17,22 @@ class ProdUnit {
     this.polynomial = [this.count]
   }
   
-  countAt(sec) {
-    // solve the polynomial
+  degreeAt(degree0, sec) {
+    // solving degree 0 of the polynomial gets the current count. This allows
+    // arbitrary degrees, to solve for velocity, acceleration, etc.
     let ret = 0
     let fact = 1
-    for (let degree=0; degree < this.polynomial.length; degree++) {
+    for (let degree = degree0; degree < this.polynomial.length; degree++) {
+      let ddiff = degree - degree0
       // c * (t^d)/d!
-      fact *= Math.max(1, degree)
-      ret += this.polynomial[degree] * Math.pow(sec, degree) / fact
+      fact *= Math.max(1, ddiff)
+      ret += this.polynomial[degree] * Math.pow(sec, ddiff) / fact
     }
     return ret
   }
+  countAt(sec) { return this.degreeAt(0, sec) }
+  velocityAt(sec) { return this.degreeAt(1, sec) }
+  accelerationAt(sec) { return this.degreeAt(2, sec) }
 }
 
 class PolyPath {
@@ -106,9 +111,8 @@ export class Production {
     return this.units[name]
   }
   
-  countAt(sec) {
-    return mapValues(this.units, (unit) => {
-      return unit.countAt(sec)
-    })
-  }
+  countAt(sec) { return mapValues(this.units, unit => unit.countAt(sec)) }
+  velocityAt(sec) { return mapValues(this.units, unit => unit.velocityAt(sec)) }
+  accelerationAt(sec) { return mapValues(this.units, unit => unit.accelerationAt(sec)) }
+  degreeAt(degree, sec) { return mapValues(this.units, unit => unit.degreeAt(degree, sec)) }
 }
