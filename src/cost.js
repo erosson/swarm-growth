@@ -1,5 +1,12 @@
 import _ from 'lodash'
 
+function assert(value, message) {
+    if (!value) {
+        console.error(message)
+        throw new Error(message)
+    }
+    return value
+}
 export class Cost {
     constructor(costs) {
         this.costs = costs
@@ -16,20 +23,22 @@ export class Cost {
         return ret
     }
     
-    maxBuyablePerCurrency(banks, targetType) {
-        const costs = this.costs[targetType]
+    maxFixedCostPerCurrency(banks, costs) {
         return _.mapValues(costs, (val, costType) => {
             if (val === 0) throw new Error('zero cost?!: '+costType)
             return (banks[costType] || 0) / val
         })
     }
-    maxBuyable(banks, targetType) {
-        const vals = _.values(this.maxBuyablePerCurrency(banks, targetType))
+    maxBuyablePerCurrency(banks, targetType) { return this.maxFixedCostPerCurrency(banks, this.costs[targetType]) }
+    _maxFixedCost(perCurrency) {
+        const vals = _.values(perCurrency)
         if (!vals.length) {
             return null
         }
         return Math.min.apply(Math, vals)
     }
+    maxFixedCost(banks, costs) { return this._maxFixedCost(this.maxFixedCostPerCurrency(banks, costs)) }
+    maxBuyable(banks, targetType) { return this._maxFixedCost(this.maxBuyablePerCurrency(banks, targetType)) }
     
     // TODO return an error code
     /**
@@ -68,8 +77,14 @@ export class Cost {
         if (!costs) {
             throw new Error('target units are not buyable', banks, targets)
         }
-        banks = _.mergeWith(banks, costs, (bank, cost) => bank - cost)
+        banks = this.subtract(banks, costs)
         banks = _.mergeWith(banks, targets, (bank, target) => (bank || 0) + target)
         return banks
+    }
+    subtract(banks, costs) {
+        return _.mergeWith(banks, costs, (bank, cost) => {
+            assert(bank >= cost, ['cannot afford that purchase', {banks, costs, bank, cost}])
+            return bank - cost
+        })
     }
 }
