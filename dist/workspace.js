@@ -3991,6 +3991,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	function assert(value, message) {
+	    if (!value) {
+	        console.error(message);
+	        throw new Error(message);
+	    }
+	    return value;
+	}
+	
 	var Cost = exports.Cost = function () {
 	    function Cost(costs) {
 	        _classCallCheck(this, Cost);
@@ -4045,22 +4053,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return ret;
 	        }
 	    }, {
-	        key: 'maxBuyablePerCurrency',
-	        value: function maxBuyablePerCurrency(banks, targetType) {
-	            var costs = this.costs[targetType];
+	        key: 'maxFixedCostPerCurrency',
+	        value: function maxFixedCostPerCurrency(banks, costs) {
 	            return _lodash2.default.mapValues(costs, function (val, costType) {
 	                if (val === 0) throw new Error('zero cost?!: ' + costType);
 	                return (banks[costType] || 0) / val;
 	            });
 	        }
 	    }, {
-	        key: 'maxBuyable',
-	        value: function maxBuyable(banks, targetType) {
-	            var vals = _lodash2.default.values(this.maxBuyablePerCurrency(banks, targetType));
+	        key: 'maxBuyablePerCurrency',
+	        value: function maxBuyablePerCurrency(banks, targetType) {
+	            return this.maxFixedCostPerCurrency(banks, this.costs[targetType]);
+	        }
+	    }, {
+	        key: '_maxFixedCost',
+	        value: function _maxFixedCost(perCurrency) {
+	            var vals = _lodash2.default.values(perCurrency);
 	            if (!vals.length) {
 	                return null;
 	            }
 	            return Math.min.apply(Math, vals);
+	        }
+	    }, {
+	        key: 'maxFixedCost',
+	        value: function maxFixedCost(banks, costs) {
+	            return this._maxFixedCost(this.maxFixedCostPerCurrency(banks, costs));
+	        }
+	    }, {
+	        key: 'maxBuyable',
+	        value: function maxBuyable(banks, targetType) {
+	            return this._maxFixedCost(this.maxBuyablePerCurrency(banks, targetType));
 	        }
 	
 	        // TODO return an error code
@@ -4150,13 +4172,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (!costs) {
 	                throw new Error('target units are not buyable', banks, targets);
 	            }
-	            banks = _lodash2.default.mergeWith(banks, costs, function (bank, cost) {
-	                return bank - cost;
-	            });
+	            banks = this.subtract(banks, costs);
 	            banks = _lodash2.default.mergeWith(banks, targets, function (bank, target) {
 	                return (bank || 0) + target;
 	            });
 	            return banks;
+	        }
+	    }, {
+	        key: 'subtract',
+	        value: function subtract(banks, costs) {
+	            return _lodash2.default.mergeWith(banks, costs, function (bank, cost) {
+	                assert(bank >= cost, ['cannot afford that purchase', { banks: banks, costs: costs, bank: bank, cost: cost }]);
+	                return bank - cost;
+	            });
 	        }
 	    }]);
 
