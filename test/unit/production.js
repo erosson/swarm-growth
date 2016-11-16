@@ -47,4 +47,18 @@ describe('numberformat', () => {
         expect(prod.velocityAt(2)).to.deep.equal({meat: 126, drone: 20, queen: 0})
         expect(prod.accelerationAt(2)).to.deep.equal({meat: 60, drone: 0, queen: 0})
     })
+    it('tolerates missing keys/vals', () => {
+        const prod = new Production({
+            a: {},
+            b: {c: 1},
+            c: {},  // b won't tolerate this missing; unitTypes must define their children
+            d: {e: 1},
+            e: {},
+        }, {
+            d: 1,
+            f: 1,
+        })
+        expect(prod.countAt(0)).to.deep.equal({a:0, b:0, c:0, d:1, e: 0})
+        expect(prod.countAt(999)).to.deep.equal({a:0, b:0, c:0, d:1, e: 999})
+    })
 });
