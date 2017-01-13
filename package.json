@@ -12,7 +12,8 @@
     "build": "gulp build",
     "preversion": "npm test",
     "version": "npm run build && git add -A dist",
-    "coverage": "gulp coverage"
+    "coverage": "gulp coverage",
+    "fuzzyBenchmark": "babel-node ./demo/fuzzyBenchmark.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
   },
   "homepage": "https://github.com/erosson/swarm-production",
   "devDependencies": {
+    "babel-cli": "^6.18.0",
     "babel-core": "6.14.0",
     "babel-loader": "6.2.5",
     "babel-polyfill": "6.13.0",
@@ -58,6 +60,7 @@
     "mainVarName": "production"
   },
   "dependencies": {
-    "lodash": "^4.16.6"
+    "lodash": "4.17.4",
+    "reselect": "2.5.4"
   }
 }

@@ -1,4 +1,4 @@
-import {Production} from '../../src/workspace';
+import {Production} from '../../src/main';
 
 describe('numberformat', () => {
     it('calculates linear production', () => {
