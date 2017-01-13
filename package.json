@@ -2,7 +2,7 @@
   "name": "swarm-production",
   "version": "0.0.5",
   "description": "Calculate polynomial production over time like Swarm Simulator does",
-  "main": "dist/workspace.js",
+  "main": "dist/swarm-production.js",
   "scripts": {
     "test": "gulp",
     "lint": "gulp lint",
@@ -54,7 +54,7 @@
     "webpack-stream": "3.2.0"
   },
   "babelBoilerplateOptions": {
-    "entryFileName": "workspace.js",
+    "entryFileName": "main.js",
     "mainVarName": "production"
   },
   "dependencies": {
